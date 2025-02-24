@@ -7,16 +7,11 @@ module.exports.login = async (req, res) => {
       res
         .cookie("accessToken", result.accessToken, {
           httpOnly: true, // client ko lây ra đc bằng js
-          expires: new Date(Date.now() + 15 * 60 * 1000), // 6 tiếng
+          expires: new Date(Date.now() + 15 * 60 * 1000),
           secure: true, // true nêu https
           sameSite: "none", // cho phép gửi cookie tới web khác
         })
-        .cookie("isLogin", true, {
-          httpOnly: false,
-          expires: new Date(Date.now() + 15 * 60 * 1000), // 6 tiếng
-          secure: true, // true nêu https
-          sameSite: "none", // cho phép gửi cookie tới web khác
-        })
+
         .cookie("refreshToken", result.refreshToken, {
           httpOnly: true,
           expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -38,10 +33,10 @@ module.exports.register = async (req, res) => {
     if (result.status === 201) {
       res
         .cookie("accessToken", result.accessToken, {
-          httpOnly: true, // client ko lây ra đc bằng js
+          httpOnly: true,
           expires: new Date(Date.now() + 15 * 60 * 1000),
-          secure: true, // true nêu https
-          sameSite: "none", // cho phép gửi cookie tới web khác
+          secure: true,
+          sameSite: "none",
         })
         .cookie("refreshToken", result.refreshToken, {
           httpOnly: true,
