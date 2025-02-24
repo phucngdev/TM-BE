@@ -18,7 +18,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://frontend-teelab-vercel.vercel.app",
+      "https://task-manager-fawn-seven-48.vercel.app",
     ],
     credentials: true,
   })
