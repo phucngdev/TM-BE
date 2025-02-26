@@ -9,6 +9,15 @@ module.exports.getAllTask = async (req, res) => {
   }
 };
 
+module.exports.getOneTask = async (req, res) => {
+  try {
+    const tasks = await taskService.getOneTaskService(req.params.id);
+    return res.status(200).json(tasks);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports.createTask = async (req, res) => {
   try {
     const task = await taskService.createTask(req.body);

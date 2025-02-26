@@ -1,3 +1,5 @@
+const CryptoJS = require("crypto-js");
+
 module.exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -12,7 +14,16 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.register = async (req, res, next) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { encryptedData } = req.body;
+
+    // Giải mã dữ liệu
+    const bytes = CryptoJS.AES.decrypt(
+      encryptedData,
+      process.env.VITE_SECRET_KEY
+    );
+    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    const { name, email, password, phone } = decryptedData;
+    console.log("🚀 ~ module.exports.register= ~ req.body:", req.body);
     if (!name || !email || !password || !phone) {
       throw new Error("Missing required fields");
     }

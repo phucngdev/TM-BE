@@ -1,5 +1,14 @@
 const { User } = require("../models/user.model");
 
+module.exports.createUser = async (userData) => {
+  try {
+    const newUser = new User(userData);
+    return await newUser.save();
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 module.exports.findUserByUsername = async (userName) => {
   try {
     return await User.findOne({ name: userName });

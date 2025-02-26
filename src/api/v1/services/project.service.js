@@ -1,4 +1,5 @@
 const projectRepository = require("../repository/project.repository");
+const jwtUtils = require("../utils/iwtUtils");
 
 module.exports.createProject = async (body) => {
   try {
@@ -14,6 +15,7 @@ module.exports.createProject = async (body) => {
       PM: body.PM,
       leader: body.leader,
       members: body.members,
+      admin: body.admin,
     };
     const requests = body.requests.map((req) => {
       return {
@@ -38,9 +40,10 @@ module.exports.createProject = async (body) => {
   }
 };
 
-module.exports.getAllProjects = async () => {
+module.exports.getAllProjects = async (token) => {
   try {
-    const projects = await projectRepository.getAllProjects();
+    const { userId } = jwtUtils.verifyToken(token);
+    const projects = await projectRepository.getAllProjects(userId);
     return {
       status: 200,
       projects,

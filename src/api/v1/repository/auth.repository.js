@@ -1,9 +1,16 @@
 const { User } = require("../models/user.model");
 
-module.exports.createUser = async (userData) => {
+module.exports.register = async (userData) => {
   try {
-    const newUser = new User(userData);
-    return await newUser.save();
+    // Tạo người dùng mới với giá trị admin tạm thời (ví dụ: null)
+    const newUser = new User({ ...userData, admin: null });
+    // Lưu người dùng vào database (bỏ qua validation)
+    await newUser.save({ validateBeforeSave: false });
+    // Cập nhật trường admin bằng _id của newUser
+    newUser.admin = newUser._id;
+    // Lưu lại thay đổi (lần này sẽ validate)
+    await newUser.save();
+    return newUser;
   } catch (error) {
     throw new Error(error);
   }

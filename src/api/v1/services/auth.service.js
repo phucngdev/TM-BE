@@ -44,7 +44,15 @@ module.exports.login = async (body) => {
 
 module.exports.register = async (body) => {
   try {
-    const { name, email, password, phone, role } = body;
+    const { encryptedData } = body;
+
+    // Giải mã dữ liệu
+    const bytes = CryptoJS.AES.decrypt(
+      encryptedData,
+      process.env.VITE_SECRET_KEY
+    );
+    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    const { name, email, password, phone } = decryptedData;
 
     // Kiểm tra email đã tồn tại chưa
     const existingUser = await authRepository.findUserByEmail(email);
@@ -53,24 +61,17 @@ module.exports.register = async (body) => {
     }
 
     // Tạo người dùng mới
-    const newUser = await authRepository.createUser({
+    await authRepository.register({
       name,
       email,
       password,
       phone,
-      role,
-    });
-
-    // Tạo JWT
-    const { accessToken, refreshToken } = jwtUtils.generateTokens({
-      userId: user._id,
+      role: "Admin",
     });
 
     return {
       status: 201,
       message: "User registered successfully",
-      accessToken,
-      refreshToken,
     };
   } catch (error) {
     return {

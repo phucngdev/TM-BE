@@ -1,8 +1,8 @@
 const { Team } = require("../models/team.model");
+const { User } = require("../models/user.model");
 
 module.exports.createTeam = async (teamData) => {
   try {
-    let newTeam = await Team.create(teamData);
     newTeam = await Team.findById(newTeam._id).populate("leader");
     return newTeam;
   } catch (error) {
@@ -26,9 +26,10 @@ module.exports.getTeamByMemberId = async (memberId) => {
   }
 };
 
-module.exports.getAllTeams = async () => {
+module.exports.getAllTeams = async (userId) => {
   try {
-    return await Team.find().populate("members leader");
+    const adminId = await User.findById(userId);
+    return await Team.find({ admin: adminId }).populate("members leader");
   } catch (error) {
     throw new Error(error);
   }

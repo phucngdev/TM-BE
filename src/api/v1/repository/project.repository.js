@@ -1,4 +1,5 @@
 const { Project } = require("../models/project.model");
+const { User } = require("../models/user.model");
 
 module.exports.createProject = async (projectData) => {
   try {
@@ -12,9 +13,12 @@ module.exports.createProject = async (projectData) => {
   }
 };
 
-module.exports.getAllProjects = async () => {
+module.exports.getAllProjects = async (userId) => {
   try {
-    let projects = await Project.find().populate("leader PM members");
+    const adminId = await User.findById(userId);
+    let projects = await Project.find({ admin: adminId }).populate(
+      "leader PM members"
+    );
     return projects;
   } catch (error) {
     throw new Error(error);

@@ -1,4 +1,5 @@
 const teamRepository = require("../repository/team.repository");
+const jwtUtils = require("../utils/iwtUtils");
 
 module.exports.createTeam = async (body) => {
   try {
@@ -13,9 +14,10 @@ module.exports.createTeam = async (body) => {
   }
 };
 
-module.exports.getAllTeams = async () => {
+module.exports.getAllTeams = async (token) => {
   try {
-    const teams = await teamRepository.getAllTeams();
+    const { userId } = jwtUtils.verifyToken(token);
+    const teams = await teamRepository.getAllTeams(userId);
     return {
       status: 200,
       teams,

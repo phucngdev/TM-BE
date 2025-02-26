@@ -8,8 +8,8 @@ module.exports.createTask = async (taskData) => {
       .populate("project", "name") // Lấy tên project
       .populate("tags") // Lấy thông tin tag
       .populate("comments.user", "name email") // Lấy thông tin user trong comments
-      .populate("status_history", "-updatedAt")
-      .exec();
+      .populate("status_history", "-updatedAt");
+    return task;
   } catch (error) {
     throw new Error(error);
   }
@@ -20,24 +20,11 @@ module.exports.getAllTasks = async (projectId) => {
     const tasks = await Task.find({ project: projectId })
       .populate("assigned_to", "name email") // Lấy thông tin user được assign
       .populate("project", "name") // Lấy tên project
-      .populate("tags") // Lấy thông tin tag
+      .populate("tags", "name") // Lấy thông tin tag
       .populate("comments.user", "name email") // Lấy thông tin user trong comments
-      .sort({ createdAt: 1 })
-      .exec(); // Sắp xếp task mới nhất lên đầu
+      .sort({ createdAt: 1 });
 
-    // Nhóm tasks theo status
-    let groupedTasks = {
-      todo: [],
-      in_progress: [],
-      review: [],
-      done: [],
-    };
-
-    tasks.forEach((task) => {
-      groupedTasks[task.status].push(task);
-    });
-
-    return groupedTasks;
+    return tasks;
   } catch (error) {
     throw new Error(error);
   }
@@ -48,11 +35,20 @@ module.exports.getOneTask = async (taskId) => {
     const task = await Task.findById(taskId)
       .populate("assigned_to", "name email") // Lấy thông tin user được assign
       .populate("project", "name") // Lấy tên project
-      .populate("tags") // Lấy thông tin tag
+      .populate("tags", "name") // Lấy thông tin tag
+      .populate("created_by", "name email")
       .populate("comments.user", "name email") // Lấy thông tin user trong comments
-      .populate("status_history", "-updatedAt")
-      .exec(); // Lấy thông tin status_history, loại b�� field updatedAt
+      .populate("status_history");
     return task;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+module.exports.getMaxIndexByStatus = async (status) => {
+  try {
+    const maxIndexTask = await Task.findOne({ status }).sort("-status_index");
+    return maxIndexTask;
   } catch (error) {
     throw new Error(error);
   }

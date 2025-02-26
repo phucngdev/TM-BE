@@ -11,7 +11,7 @@ module.exports.createTeam = async (req, res) => {
 
 module.exports.getAllTeams = async (req, res) => {
   try {
-    const result = await teamService.getAllTeams();
+    const result = await teamService.getAllTeams(req.cookies.accessToken);
     return res.status(result.status).json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });

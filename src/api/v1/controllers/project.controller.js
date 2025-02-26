@@ -11,7 +11,7 @@ module.exports.createProject = async (req, res) => {
 
 module.exports.getAllProjects = async (req, res) => {
   try {
-    const result = await projectService.getAllProjects();
+    const result = await projectService.getAllProjects(req.cookies.accessToken);
     return res.status(result.status).json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });

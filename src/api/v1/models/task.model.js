@@ -21,6 +21,7 @@ const taskSchema = new mongoose.Schema(
       enum: ["low", "medium", "high"],
       default: "medium",
     },
+    status_index: { type: Number, default: 0 },
     due_date: {
       type: Date,
     },
@@ -49,6 +50,11 @@ const taskSchema = new mongoose.Schema(
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Tag",
+      },
+    ],
+    task_case: [
+      {
+        type: String,
       },
     ],
     comments: [
