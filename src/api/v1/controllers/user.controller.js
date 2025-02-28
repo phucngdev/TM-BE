@@ -27,3 +27,13 @@ module.exports.getAllPersonnel = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+module.exports.getAllPersonelChart = async (req, res) => {
+  try {
+    const { accessToken } = req.cookies;
+    const result = await userService.getAllPersonelChart(accessToken);
+    return res.status(result.status).json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

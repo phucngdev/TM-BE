@@ -34,9 +34,24 @@ module.exports.createUser = async (userData) => {
   }
 };
 
-module.exports.getAllPersonnel = async (currentUserId) => {
+module.exports.getAdminId = async (userId) => {
   try {
-    return await User.find({ _id: { $ne: currentUserId } }).select("-password");
+    const admin = await User.findById(userId).select("admin");
+    return admin;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+module.exports.getAllPersonnel = async (currentUserId, adminId) => {
+  try {
+    return await User.find({
+      _id: { $ne: currentUserId },
+      admin: adminId,
+    })
+      // .populate("leader", "name")
+      // .populate("PM", "name")
+      .select("-password");
   } catch (error) {
     throw new Error(error);
   }

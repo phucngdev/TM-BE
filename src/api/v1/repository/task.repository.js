@@ -53,3 +53,31 @@ module.exports.getMaxIndexByStatus = async (status) => {
     throw new Error(error);
   }
 };
+
+module.exports.swapTaskStatus = async (activeId, overId) => {
+  try {
+    const taskActive = await Task.findById(activeId);
+    const taskOver = await Task.findById(overId);
+
+    if (!taskActive || !taskOver) {
+      throw new Error("Một trong hai task không tồn tại.");
+    }
+
+    const tempStatusIndex = taskActive.status_index;
+    taskActive.status_index = taskOver.status_index;
+    taskOver.status_index = tempStatusIndex;
+
+    await taskActive.save();
+    await taskOver.save();
+
+    return {
+      activeId,
+      overId,
+      activeIndex: taskActive.status_index,
+      overIndex: taskOver.status_index,
+      status: taskActive.status,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
+};

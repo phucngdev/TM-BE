@@ -58,6 +58,14 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Team",
     },
+    leader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    PM: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
     admin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

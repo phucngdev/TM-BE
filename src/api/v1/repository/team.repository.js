@@ -3,6 +3,7 @@ const { User } = require("../models/user.model");
 
 module.exports.createTeam = async (teamData) => {
   try {
+    let newTeam = await Team.create(teamData);
     newTeam = await Team.findById(newTeam._id).populate("leader");
     return newTeam;
   } catch (error) {

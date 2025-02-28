@@ -79,3 +79,15 @@ module.exports.createTask = async (body) => {
     throw new Error(error);
   }
 };
+
+module.exports.swapTaskStatus = async (activeId, overId) => {
+  try {
+    const result = await taskRepository.swapTaskStatus(activeId, overId);
+    return {
+      status: 200,
+      result,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
+};
