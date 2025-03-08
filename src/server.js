@@ -2,17 +2,16 @@ const http = require("http");
 const app = require("./app");
 const connectDB = require("./config/connectDB");
 const server = http.createServer(app);
-// const socketService = require("./api/v1/services/socket.service");
+const socketService = require("./api/v1/services/socket.service");
 
 require("dotenv").config();
-// const socketIo = require("socket.io")(server, {
-//   cors: {
-//     origin: "*",
-//   },
-// });
-// global._io = socketIo;
-
-// global._io.on("connection", socketService.socketConnect());
+const socketIo = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
+global._io = socketIo;
+global._io.on("connection", socketService.socketConnect());
 
 connectDB();
 

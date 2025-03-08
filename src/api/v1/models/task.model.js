@@ -21,7 +21,7 @@ const taskSchema = new mongoose.Schema(
       enum: ["low", "medium", "high"],
       default: "medium",
     },
-    status_index: { type: Number, default: 0 },
+    order: { type: Number, default: 1 },
     due_date: {
       type: Date,
     },

@@ -29,8 +29,7 @@ module.exports.createTask = async (req, res) => {
 
 module.exports.swapTaskStatus = async (req, res) => {
   try {
-    const { activeId, overId } = req.params;
-    const task = await taskService.swapTaskStatus(activeId, overId);
+    const task = await taskService.swapTaskStatus(req.body);
     return res.status(task.status).json(task);
   } catch (error) {
     return res.status(500).json({ message: error.message });

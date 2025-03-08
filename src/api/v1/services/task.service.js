@@ -21,7 +21,7 @@ module.exports.getAllTaskService = async (projectId) => {
     });
 
     Object.keys(groupedTasks).forEach((status) => {
-      groupedTasks[status].sort((a, b) => a.status_index - b.status_index);
+      groupedTasks[status].sort((a, b) => a.order - b.order);
     });
 
     // Tránh lỗi chia cho 0
@@ -67,7 +67,7 @@ module.exports.createTask = async (body) => {
       status: body.status || "todo",
       created_by: body.created_by,
       task_case: body.task_case,
-      status_index: maxIndexTask ? maxIndexTask.status_index + 1 : 0,
+      order: maxIndexTask ? maxIndexTask.order + 1 : 0,
     };
     const newTask = await taskRepository.createTask(taskData);
     return {
@@ -80,9 +80,15 @@ module.exports.createTask = async (body) => {
   }
 };
 
-module.exports.swapTaskStatus = async (activeId, overId) => {
+module.exports.swapTaskStatus = async (body) => {
   try {
-    const result = await taskRepository.swapTaskStatus(activeId, overId);
+    const { activeId, overIndex, activeStatus, overStatus } = body;
+    const result = await taskRepository.swapTaskStatus(
+      activeId,
+      overIndex,
+      activeStatus,
+      overStatus
+    );
     return {
       status: 200,
       result,

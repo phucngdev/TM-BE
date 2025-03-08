@@ -1,4 +1,5 @@
 const { Task } = require("../models/task.model");
+const { Op } = require("sequelize");
 
 module.exports.createTask = async (taskData) => {
   try {
@@ -47,37 +48,54 @@ module.exports.getOneTask = async (taskId) => {
 
 module.exports.getMaxIndexByStatus = async (status) => {
   try {
-    const maxIndexTask = await Task.findOne({ status }).sort("-status_index");
+    const maxIndexTask = await Task.findOne({ status }).sort("-order");
     return maxIndexTask;
   } catch (error) {
     throw new Error(error);
   }
 };
 
-module.exports.swapTaskStatus = async (activeId, overId) => {
+module.exports.swapTaskStatus = async (
+  activeId,
+  overIndex,
+  activeStatus,
+  overStatus
+) => {
   try {
-    const taskActive = await Task.findById(activeId);
-    const taskOver = await Task.findById(overId);
-
-    if (!taskActive || !taskOver) {
-      throw new Error("Một trong hai task không tồn tại.");
+    const activeTask = await Task.findById(activeId);
+    if (!activeTask) {
+      throw new Error("Active task not found");
     }
 
-    const tempStatusIndex = taskActive.status_index;
-    taskActive.status_index = taskOver.status_index;
-    taskOver.status_index = tempStatusIndex;
+    if (activeStatus === overStatus) {
+      // Tăng order của tất cả các task có order >= overIndex trong cùng status
+      await Task.updateMany(
+        { status: activeStatus, order: { $gte: overIndex } },
+        { $inc: { order: 1 } }
+      );
 
-    await taskActive.save();
-    await taskOver.save();
+      // Cập nhật order của task được kéo đến vị trí mới
+      await Task.findByIdAndUpdate(activeId, { order: overIndex });
+    } else {
+      // Tăng order trong danh sách mới
+      await Task.updateMany(
+        { status: overStatus, order: { $gte: overIndex } },
+        { $inc: { order: 1 } }
+      );
 
-    return {
-      activeId,
-      overId,
-      activeIndex: taskActive.status_index,
-      overIndex: taskOver.status_index,
-      status: taskActive.status,
-    };
+      // Chuyển task sang danh sách mới
+      await Task.findByIdAndUpdate(activeId, {
+        status: overStatus,
+        order: overIndex,
+      });
+
+      // Giảm order của danh sách cũ
+      await Task.updateMany(
+        { status: activeStatus, order: { $gt: activeTask.order } },
+        { $inc: { order: -1 } }
+      );
+    }
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error.message);
   }
 };

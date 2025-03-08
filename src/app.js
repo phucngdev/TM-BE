@@ -9,6 +9,7 @@ const { TeamRoutes } = require("./api/v1/routes/team.routes");
 const { ProjectRoutes } = require("./api/v1/routes/project.routes");
 const { TagRoutes } = require("./api/v1/routes/tag.routes");
 const { TaskRoutes } = require("./api/v1/routes/task.routes");
+const { RoomRoutes } = require("./api/v1/routes/room.routes");
 
 const app = express();
 
@@ -35,5 +36,6 @@ app.use("/api/v1/team", TeamRoutes);
 app.use("/api/v1/project", ProjectRoutes);
 app.use("/api/v1/tag", TagRoutes);
 app.use("/api/v1/task", TaskRoutes);
+app.use("/api/v1/room", RoomRoutes);
 
 module.exports = app;
