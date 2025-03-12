@@ -16,6 +16,13 @@ const MessageSchema = new mongoose.Schema(
       ref: "Room",
       required: true,
     },
+    status: [
+      {
+        type: String,
+        enum: ["sent", "edit", "deleted"],
+        default: "sent",
+      },
+    ],
     readed: [
       {
         user: {

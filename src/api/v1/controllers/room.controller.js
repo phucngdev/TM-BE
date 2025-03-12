@@ -29,3 +29,12 @@ module.exports.getRoomByMembers = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+module.exports.getOneRoomChat = async (req, res) => {
+  try {
+    const result = await roomService.getOneRoomChat(req.params.id);
+    return res.status(result.status).json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

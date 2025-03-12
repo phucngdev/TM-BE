@@ -59,18 +59,8 @@ const taskSchema = new mongoose.Schema(
     ],
     comments: [
       {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        comment: {
-          type: String,
-          required: true,
-        },
-        created_at: {
-          type: Date,
-          default: Date.now,
-        },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
       },
     ],
     viewed: [

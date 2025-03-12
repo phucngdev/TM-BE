@@ -16,9 +16,14 @@ module.exports.createTask = async (taskData) => {
   }
 };
 
-module.exports.getAllTasks = async (projectId) => {
+module.exports.getAllTasks = async (projectId, userId = null) => {
   try {
-    const tasks = await Task.find({ project: projectId })
+    let filter = { project: projectId };
+
+    if (userId) {
+      filter.$or = [{ assigned_to: userId }];
+    }
+    const tasks = await Task.find(filter)
       .populate("assigned_to", "name email") // Lấy thông tin user được assign
       .populate("project", "name") // Lấy tên project
       .populate("tags", "name") // Lấy thông tin tag

@@ -3,7 +3,7 @@ const { Room } = require("../models/room.model");
 module.exports.createRoom = async (roomData) => {
   try {
     let room = await Room.create(roomData);
-    room = await Room.findById(roomId)
+    room = await Room.findById(room._id)
       .populate({
         path: "members",
         select: "name avatar",

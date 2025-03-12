@@ -1,4 +1,5 @@
 const taskRepository = require("../repository/task.repository");
+const jwtUtils = require("../utils/iwtUtils");
 
 module.exports.getAllTaskService = async (projectId) => {
   try {
@@ -32,6 +33,36 @@ module.exports.getAllTaskService = async (projectId) => {
       tasks: groupedTasks,
       totalTasks: totalTasks,
       donePercent: donePercent,
+      status: 200,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+module.exports.getAllMyTaskService = async (projectId, token) => {
+  try {
+    const { userId } = jwtUtils.verifyToken(token);
+    const tasks = await taskRepository.getAllTasks(projectId, userId);
+
+    // Khởi tạo nhóm
+    const groupedTasks = {
+      todo: [],
+      in_progress: [],
+      review: [],
+      done: [],
+    };
+
+    tasks.forEach((task) => {
+      groupedTasks[task.status].push(task);
+    });
+
+    Object.keys(groupedTasks).forEach((status) => {
+      groupedTasks[status].sort((a, b) => a.order - b.order);
+    });
+
+    return {
+      myTask: groupedTasks,
       status: 200,
     };
   } catch (error) {

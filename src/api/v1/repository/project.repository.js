@@ -15,13 +15,28 @@ module.exports.createProject = async (projectData) => {
 
 module.exports.getAllProjects = async (userId) => {
   try {
-    const adminId = await User.findById(userId);
-    let projects = await Project.find({ admin: adminId }).populate(
-      "leader PM members"
-    );
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    let projects;
+    if (user.role === "Admin") {
+      // Nếu là admin, lấy tất cả project có admin là userId
+      projects = await Project.find({ admin: userId }).populate(
+        "leader PM members"
+      );
+    } else {
+      // Nếu không phải admin, lấy các project có userId trong members
+      projects = await Project.find({ members: userId }).populate(
+        "leader PM members"
+      );
+    }
+
     return projects;
   } catch (error) {
-    throw new Error(error);
+    throw new Error("Lỗi khi lấy danh sách project: " + error.message);
   }
 };
 

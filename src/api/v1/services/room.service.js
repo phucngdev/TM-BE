@@ -32,10 +32,28 @@ module.exports.getAllRoomChat = async (token) => {
   }
 };
 
+module.exports.getOneRoomChat = async (roomId) => {
+  try {
+    const room = await roomRepository.getOneRoomChat(roomId);
+    if (!room) {
+      throw new Error("Room not found");
+    }
+    return {
+      status: 200,
+      room,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 module.exports.getRoomByMembers = async (token, memberId) => {
   try {
     const { userId } = jwtUtils.verifyToken(token);
     const room = await roomRepository.getRoomByMembers(userId, memberId);
+    if (!room) {
+      throw new Error("Room not found");
+    }
     return {
       status: 200,
       room,

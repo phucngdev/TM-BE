@@ -1,3 +1,5 @@
+const messageService = require("./message.service");
+
 module.exports.socketConnect = () => {
   return (socket) => {
     // Lắng nghe sự kiện "joinRoom" từ client để tham gia room cụ thể
@@ -12,10 +14,33 @@ module.exports.socketConnect = () => {
     });
 
     // Lắng nghe sự kiện "sendMessage" từ client
-    socket.on("sendMessage", (data) => {
-      const { room_id } = data;
-      // Gửi tin nhắn đến tất cả các client trong room
-      _io.to(room_id).emit("sendMessage", data);
+    socket.on("sendMessage", async (data) => {
+      try {
+        // Lưu vào database trước
+        const mesData = {
+          senderId: data.sender._id,
+          roomId: data.room,
+          content: data.content,
+        };
+        const res = await messageService.sendMessage(mesData);
+        if (res.status !== 201) {
+          throw new Error(`Error sending message`);
+        }
+        _io.emit("sendMessage", res.newMessage);
+      } catch (error) {
+        // Gửi sự kiện lỗi về client
+        _io.emit("messageError", {
+          data: data,
+          error: "Error sending message!",
+          details: error.message, // Đính kèm lỗi chi tiết (nếu cần)
+        });
+      }
+    });
+
+    socket.on("updateMessage", (data) => {
+      try {
+        _io.emit("updateMessage", {});
+      } catch (error) {}
     });
 
     // gửi thông báo
